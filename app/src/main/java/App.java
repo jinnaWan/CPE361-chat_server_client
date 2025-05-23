@@ -5,12 +5,14 @@
 
 import java.io.IOException;
 
-import chat.ChatServer;
+import chat.ClientThread;
+import chat.ServerThread;
 import threadnetwork.WebSocketClient;
 import threadnetwork.WebSocketServer;
 
 public class App {
     private static final int PORT = 8080;
+    private static final int CHAT_PORT = 12345;
     
     public String getGreeting() {
         return "Hello World!";
@@ -24,13 +26,13 @@ public class App {
         } else if (args.length > 0 && args[0].equalsIgnoreCase("chat-server")) {
             startChatServer();
         } else if (args.length > 0 && args[0].equalsIgnoreCase("chat-client")) {
-            startChatClient(args);
+            startChatClient();
         } else {
             System.out.println("Available commands:");
             System.out.println("  server        - Start basic WebSocket server");
             System.out.println("  client        - Start basic WebSocket client");
-            System.out.println("  chat-server   - Start PA10 Chat server");
-            System.out.println("  chat-client   - Start PA10 Chat client (JavaFX)");
+            System.out.println("  chat-server   - Start PA10 Chat server (console-based)");
+            System.out.println("  chat-client   - Start PA10 Chat client (console-based)");
             System.out.println();
             System.out.println("Examples:");
             System.out.println("  java -jar ChatApp.jar chat-server");
@@ -39,21 +41,23 @@ public class App {
     }
     
     private static void startChatServer() {
-        System.out.println("Starting PA10 Chat Server...");
+        System.out.println("Starting PA10 Chat Server (lecture-style)...");
         try {
-            ChatServer server = new ChatServer(PORT);
+            ServerThread server = new ServerThread(CHAT_PORT);
             server.start();
+            server.join(); // Wait for server to complete
         } catch (Exception e) {
             System.err.println("Failed to start chat server: " + e.getMessage());
             e.printStackTrace();
         }
     }
     
-    private static void startChatClient(String[] args) {
-        System.out.println("Starting PA10 Chat Client...");
+    private static void startChatClient() {
+        System.out.println("Starting PA10 Chat Client (console-based)...");
         try {
-            // Launch JavaFX application
-            chat.ChatClient.main(args);
+            ClientThread client = new ClientThread("localhost", CHAT_PORT);
+            client.start();
+            client.join(); // Wait for client to complete
         } catch (Exception e) {
             System.err.println("Failed to start chat client: " + e.getMessage());
             e.printStackTrace();

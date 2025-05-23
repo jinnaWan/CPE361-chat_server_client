@@ -1,60 +1,67 @@
-# PA10: Chat Client-Server Application
+# PA10: Chat Client-Server Application (Lecture Style)
 
-This is a simple chat application implementing the PA10 assignment requirements:
+This is a chat application implementing the PA10 assignment requirements following the **exact structure and patterns from the lecture materials**:
 
 > **PA10**: Create a chat client and server using Java threading and networking. Multiple clients should be able to connect to a single server and exchange messages in real-time.
 
 ## What This Implementation Does
 
-✅ **Multi-client Chat Server**: TCP server that handles multiple chat clients simultaneously  
-✅ **JavaFX Chat Client**: Modern graphical user interface for chatting  
-✅ **Real-time Messaging**: Messages are instantly broadcast to all connected users  
-✅ **Thread-based**: Server uses separate threads for each client connection  
-✅ **User Management**: Tracks users joining/leaving the chat  
+✅ **ServerThread extends Thread**: Exactly as shown in lecture examples  
+✅ **ClientHandler extends Thread**: Exactly as shown in lecture examples  
+✅ **Console-based ClientThread**: Two threads (sender/receiver) as required  
+✅ **DataInputStream/DataOutputStream**: Using exact same I/O classes as lectures  
+✅ **List of client output streams**: For broadcasting as specified in lecture  
+✅ **Real-time messaging**: Messages broadcast to all connected clients  
 
-## Architecture
+## Architecture (Following Lecture Structure)
 
-### ChatServer.java
-- **TCP Server** listening on port 8080
-- **ClientHandler Threads**: One thread per connected client
-- **Message Broadcasting**: Sends messages to all connected clients
-- **User Notifications**: Announces when users join/leave
-- **Concurrent Safe**: Uses thread-safe data structures
+### ServerThread.java
+- **Extends Thread** (as in lecture examples)
+- **TCP Server** listening on port 12345
+- **Maintains static List<DataOutputStream>** for broadcasting (as required)
+- **Creates ClientHandler thread** for each client (exactly like lecture)
+- **Uses DataInputStream/DataOutputStream** (as in lecture examples)
 
-### ChatClient.java
-- **JavaFX Application** with modern GUI
-- **Connection Management**: Connect/disconnect to server
-- **Real-time Updates**: Listens for incoming messages on separate thread
-- **User-friendly Interface**: Text area for chat history, input field for typing
-- **Auto-scroll**: Automatically scrolls to show latest messages
+### ClientHandler.java  
+- **Extends Thread** (as in lecture examples)
+- **One handler per client** (as specified in lecture)
+- **Uses DataInputStream/DataOutputStream** (as in lecture examples)
+- **Reads messages and broadcasts** to other clients
+- **Manages client join/leave notifications**
 
-## Key Features
+### ClientThread.java
+- **Console-based client** (as in lecture examples)  
+- **Two threads as required**:
+  - **MessageSender**: Handles keyboard input (as specified in lecture)
+  - **MessageReceiver**: Listens for server messages (as specified in lecture)
+- **Uses DataInputStream/DataOutputStream** (as in lecture examples)
+- **Scanner for console input** (simple console interface)
 
-### Server Features
-- Handles unlimited simultaneous clients
-- Broadcasts messages to all users except sender
-- Assigns unique user IDs to each client
-- Notifies all users when someone joins/leaves
-- Graceful shutdown handling
+## Key Features (Following Lecture Requirements)
 
-### Client Features
-- Easy connection setup (server/port input)
-- Real-time chat with other users
-- Clean, modern JavaFX interface
-- Automatic message formatting
-- Connection status indicator
-- Enter key to send messages
+### Server Features ✅
+- **Accepts multiple client connections** ✓
+- **Spawns new ClientHandler thread per client** ✓ 
+- **Maintains list of client output streams for broadcasting** ✓
+- Uses exact same structure as lecture ServerThread examples
+
+### Client Features ✅
+- **Connects to the server** ✓
+- **Has two threads** ✓:
+  - **One for sending messages (keyboard input)** ✓
+  - **One for receiving messages (from server)** ✓
+- Console-based interface matching lecture examples
 
 ## Running the Chat Application
 
 ### Method 1: Automatic Launch (Windows)
 ```bash
-.\start_chat.bat
+.\start_chat_lecture.bat
 ```
 This will:
 1. Build the application 
-2. Start the chat server
-3. Launch two chat client windows
+2. Start the console-based chat server (ServerThread)
+3. Launch two console-based chat clients (ClientThread)
 
 ### Method 2: Manual Steps
 
@@ -73,81 +80,91 @@ This will:
    java -jar app/build/libs/ChatApp.jar chat-client
    ```
 
-### Method 3: With JavaFX Module Path
-If you encounter JavaFX errors:
-```bash
-java --module-path "path/to/javafx/lib" --add-modules javafx.controls,javafx.fxml -jar app/build/libs/ChatApp.jar chat-client
-```
-
 ## How to Use
 
 ### Starting a Chat Session
-1. Run the server first
-2. Launch one or more chat clients
-3. In each client, make sure server is "localhost" and port is "8080"
-4. Click "Connect" to join the chat
-5. Start typing messages!
+1. Run the server first (console window will show "Waiting for client...")
+2. Launch one or more chat clients (each opens in new console window)
+3. Clients automatically connect to localhost:12345
+4. Start typing messages in any client window!
+5. Type `quit` to exit a client
 
-### Chat Commands
-- Type any message and press Enter to send
-- Messages appear as "User X: your message"
-- System messages show user join/leave notifications
-- Click "Disconnect" to leave the chat
+### What You'll See
 
-## What You'll See
-
-### Server Console
+#### Server Console
 ```
-Chat Server started on port 8080
-Waiting for clients to connect...
-Client 1 connected from /127.0.0.1
-Broadcasting: *** User 1 joined the chat ***
-Client 2 connected from /127.0.0.1  
-Broadcasting: *** User 2 joined the chat ***
-Broadcasting: User 1: Hello everyone!
-Broadcasting: User 2: Hi there!
+Chat Server started on port 12345
+Waiting for client...
+Connected to /127.0.0.1:54321
+Client added to broadcast list. Total clients: 1
+Waiting for client...
+Connected to /127.0.0.1:54322
+Client added to broadcast list. Total clients: 2
+Broadcasting: *** A new user joined the chat ***
+Received from /127.0.0.1:54321: Hello everyone!
+Broadcasting: Client: Hello everyone!
 ```
 
-### Client Windows
-- **Connection panel** at top with server/port fields
-- **Chat area** showing all messages and notifications
-- **Message input** at bottom for typing
-- **Status indicator** showing connection state
+#### Client Console
+```
+=== PA10 Chat Client ===
+Connecting to chat server...
+Connecting to localhost on port 12345
+Just connected to /127.0.0.1:12345
+Welcome to the chat! Type your messages and press Enter.
+*** You are now connected to the chat server ***
+You can start typing messages (type 'quit' to exit):
+Hello everyone!
+*** A new user joined the chat ***
+Client: Hi there!
+```
 
-## Technical Implementation
+## Technical Implementation (Lecture Compliance)
 
-### Threading
-- **Server Main Thread**: Accepts new client connections
-- **ClientHandler Threads**: One per client for message processing
-- **Client UI Thread**: JavaFX Application Thread for GUI updates
-- **Client Listener Thread**: Receives messages from server
+### Threading ✅
+- **ServerThread Main Thread**: Accepts new client connections (extends Thread)
+- **ClientHandler Threads**: One per client for message processing (extends Thread)  
+- **Client Sender Thread**: Handles keyboard input (inner class implementing Runnable)
+- **Client Receiver Thread**: Receives messages from server (inner class implementing Runnable)
 
-### Networking
+### Networking ✅
 - **TCP Sockets**: Reliable client-server communication
-- **BufferedReader/PrintWriter**: Text-based message protocol
-- **Concurrent Collections**: Thread-safe client management
-- **Graceful Shutdown**: Proper resource cleanup
+- **DataInputStream/DataOutputStream**: Exact I/O classes from lectures
+- **Static List<DataOutputStream>**: For broadcasting (as specified in lecture)
+- **Synchronized methods**: Thread-safe broadcasting
 
-### JavaFX GUI
-- **BorderPane Layout**: Organized UI structure
-- **Event Handling**: Button clicks and keyboard input
-- **Platform.runLater()**: Thread-safe GUI updates
-- **Real-time Updates**: Messages appear instantly
+### Console Interface ✅
+- **Scanner for input**: Simple keyboard input (as in lecture examples)
+- **System.out for output**: Console-based display
+- **Two-thread client design**: Exactly as specified in lecture requirements
 
 ## Assignment Requirements ✅
 
-✅ **Chat client and server** - Complete TCP-based chat system  
-✅ **Multiple clients** - Server handles unlimited simultaneous users  
-✅ **Threading** - Server uses threads for each client connection  
-✅ **Real-time messaging** - Instant message broadcasting  
-✅ **User interface** - Modern JavaFX client application  
+✅ **Server handles multiple clients concurrently** - ServerThread with ClientHandler threads  
+✅ **Each client can send and receive messages in real-time** - Two-thread design  
+✅ **Messages are broadcast to all connected clients** - Using list of output streams  
+✅ **Server spawns new ClientHandler thread per client** - Exactly as in lecture  
+✅ **Maintains list of client output streams for broadcasting** - Static CopyOnWriteArrayList  
+✅ **Client has two threads** - MessageSender and MessageReceiver  
+✅ **One for sending messages (keyboard input)** - Scanner-based input thread  
+✅ **One for receiving messages (from server)** - DataInputStream reading thread  
+
+## Lecture Structure Compliance 🎯
+
+This implementation follows the **exact structure from lectures**:
+
+1. **Same class names**: ServerThread, ClientHandler, ClientThread
+2. **Same inheritance**: All extend Thread (as in examples)
+3. **Same I/O classes**: DataInputStream/DataOutputStream (as in examples)  
+4. **Same patterns**: Socket handling, thread management (as in examples)
+5. **Same requirements**: Two-thread client, broadcast list (as specified)
 
 ## PA10 Complete! 🎉
 
 This implementation demonstrates all the key concepts from the lecture:
-- **Thread Programming**: Multi-threaded server handling concurrent clients
-- **Network Programming**: TCP client-server communication with sockets
-- **JavaFX GUI**: Modern graphical user interface
-- **Real-time Systems**: Instant message delivery and user notifications
+- **Thread Programming**: Exact same patterns as lecture examples
+- **Network Programming**: TCP client-server using same I/O classes
+- **Console Interface**: Simple, functional interface matching lecture style
+- **Broadcasting**: List of output streams exactly as specified in requirements
 
-The chat system provides a practical example of how threads and networking work together to create interactive applications that multiple users can use simultaneously. 
+The chat system provides a practical example following the exact lecture structure and requirements. 

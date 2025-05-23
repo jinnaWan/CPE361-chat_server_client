@@ -9,9 +9,12 @@ public class ClientHandler extends Thread {
     private Socket clientSocket;
     private DataInputStream in;
     private DataOutputStream out;
+    private static int nextClientId = 1;
+    private int clientId;
     
     public ClientHandler(Socket socket) {
         this.clientSocket = socket;
+        this.clientId = nextClientId++;
     }
     
     @Override
@@ -24,23 +27,23 @@ public class ClientHandler extends Thread {
             // Add this client to the broadcast list
             ServerThread.addClient(out);
             
-            // Send welcome message
-            out.writeUTF("Welcome to the chat! Type your messages and press Enter.");
+            // Send welcome message with client ID
+            out.writeUTF("Welcome to the chat! You are User " + clientId);
             out.writeUTF("*** You are now connected to the chat server ***");
             out.flush();
             
             // Notify other clients about new user
-            ServerThread.broadcastMessage("*** A new user joined the chat ***", out);
+            ServerThread.broadcastMessage("*** User " + clientId + " joined the chat ***", out);
             
             // Read messages from client and broadcast them
             String message;
             while ((message = in.readUTF()) != null) {
                 if (message.trim().isEmpty()) continue;
                 
-                System.out.println("Received from " + clientSocket.getRemoteSocketAddress() + ": " + message);
+                System.out.println("Received from User " + clientId + ": " + message);
                 
                 // Format and broadcast message to all other clients
-                String broadcastMessage = "Client: " + message;
+                String broadcastMessage = "User " + clientId + ": " + message;
                 ServerThread.broadcastMessage(broadcastMessage, out);
             }
             
@@ -58,7 +61,7 @@ public class ClientHandler extends Thread {
                 ServerThread.removeClient(out);
                 
                 // Notify other clients about user leaving
-                ServerThread.broadcastMessage("*** A user left the chat ***", out);
+                ServerThread.broadcastMessage("*** User " + clientId + " left the chat ***", out);
             }
             
             // Close streams and socket

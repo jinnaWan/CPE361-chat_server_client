@@ -1,9 +1,11 @@
 package chat;
 
-import java.io.*;
-import java.net.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ServerThread extends Thread {
     private ServerSocket servsock;

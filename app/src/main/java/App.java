@@ -3,12 +3,8 @@
  */
 
 
-import java.io.IOException;
-
 import chat.ClientThread;
 import chat.ServerThread;
-import threadnetwork.WebSocketClient;
-import threadnetwork.WebSocketServer;
 
 public class App {
     private static final int PORT = 8080;
@@ -19,18 +15,12 @@ public class App {
     }
 
     public static void main(String[] args) {
-        if (args.length > 0 && args[0].equalsIgnoreCase("server")) {
-            startServer();
-        } else if (args.length > 0 && args[0].equalsIgnoreCase("client")) {
-            startClient();
-        } else if (args.length > 0 && args[0].equalsIgnoreCase("chat-server")) {
+        if (args.length > 0 && args[0].equalsIgnoreCase("chat-server")) {
             startChatServer();
         } else if (args.length > 0 && args[0].equalsIgnoreCase("chat-client")) {
             startChatClient();
         } else {
             System.out.println("Available commands:");
-            System.out.println("  server        - Start basic WebSocket server");
-            System.out.println("  client        - Start basic WebSocket client");
             System.out.println("  chat-server   - Start PA10 Chat server (console-based)");
             System.out.println("  chat-client   - Start PA10 Chat client (console-based)");
             System.out.println();
@@ -61,72 +51,6 @@ public class App {
         } catch (Exception e) {
             System.err.println("Failed to start chat client: " + e.getMessage());
             e.printStackTrace();
-        }
-    }
-    
-    private static void startServer() {
-        System.out.println("Starting WebSocket server...");
-        WebSocketServer server = new WebSocketServer(PORT);
-        
-        // Set timeout to 5 minutes
-        server.setTimeout(300000);
-        
-        // Start the server
-        server.startServer();
-        
-        // Keep main thread alive
-        try {
-            System.out.println("Press Ctrl+C to stop the server");
-            Thread.sleep(Long.MAX_VALUE);
-        } catch (InterruptedException e) {
-            System.out.println("Server interrupted");
-        } finally {
-            server.stopServer();
-        }
-    }
-    
-    private static void startClient() {
-        System.out.println("Starting WebSocket client...");
-        WebSocketClient client = new WebSocketClient("localhost", PORT, "/websocket");
-        
-        // Add message handler
-        client.setMessageHandler(new WebSocketClient.MessageHandler() {
-            @Override
-            public void onMessage(String message) {
-                System.out.println("Received: " + message);
-            }
-            
-            @Override
-            public void onClose() {
-                System.out.println("Connection closed");
-            }
-            
-            @Override
-            public void onError(Exception ex) {
-                System.err.println("Error: " + ex.getMessage());
-            }
-        });
-        
-        // Connect to server
-        client.connect();
-        
-        if (client.isConnected()) {
-            // Send some messages
-            try {
-                client.sendMessage("Hello WebSocket Server!");
-                Thread.sleep(1000);
-                client.sendMessage("This is a test message");
-                Thread.sleep(1000);
-                client.sendMessage("Goodbye!");
-                Thread.sleep(1000);
-            } catch (IOException | InterruptedException e) {
-                System.err.println("Error sending message: " + e.getMessage());
-            } finally {
-                // Close the connection
-                client.close();
-            }
-        } else {
-            System.err.println("Failed to connect to server");
         }
     }
 }

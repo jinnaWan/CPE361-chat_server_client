@@ -100,9 +100,9 @@ Client added to broadcast list. Total clients: 1
 Waiting for client...
 Connected to /127.0.0.1:54322
 Client added to broadcast list. Total clients: 2
-Broadcasting: *** A new user joined the chat ***
-Received from /127.0.0.1:54321: Hello everyone!
-Broadcasting: Client: Hello everyone!
+Broadcasting: *** User 1 joined the chat ***
+Received from User 1: Hello everyone!
+Broadcasting: User 1: Hello everyone!
 ```
 
 #### Client Console
@@ -111,12 +111,12 @@ Broadcasting: Client: Hello everyone!
 Connecting to chat server...
 Connecting to localhost on port 12345
 Just connected to /127.0.0.1:12345
-Welcome to the chat! Type your messages and press Enter.
+Welcome to the chat! You are User 1
 *** You are now connected to the chat server ***
 You can start typing messages (type 'quit' to exit):
 Hello everyone!
-*** A new user joined the chat ***
-Client: Hi there!
+*** User 2 joined the chat ***
+User 2: Hi there!
 ```
 
 ## Technical Implementation (Lecture Compliance)

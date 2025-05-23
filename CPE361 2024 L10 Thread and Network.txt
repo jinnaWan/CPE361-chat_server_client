@@ -1,0 +1,523 @@
+Thread and Network
+CPE361 Java Programming
+
+First thing first
+There are two website that you should read if you don’t want to buy a java book
+Oracle has a java tutorial in detail which can be found at
+docs.oracle.com/javase/tutorial
+We cover basic and some essential from there.
+However, TutorialsPoint offers a shorter and simpler version for you
+http://www.tutorialspoint.com/java/
+We cover all java basic, Java OO, and half of the Java advanced topics
+You should go take a look and read them, it might help you in the exam
+
+Goal today!
+Chat client and server
+Using thread to handle input and multiple clients
+Using network to send and receive message from other clients
+
+Thread Programming in Java
+🎯 Learning Objectives
+By the end of this session, students will be able to:
+●
+
+Understand the concept of multithreading and concurrency
+
+●
+
+Create and manage threads in Java
+
+●
+
+Use Runnable and Thread classes
+
+●
+
+Identify issues like race conditions and thread safety
+
+●
+
+Use basic thread synchronization (preview)
+
+Thread
+Multi-tasking, sort of
+You want to do many things at the same time
+Keep your program simple
+Thread concept in Operating System
+Import java.util.concurrent package
+Create a thread is easy
+Thread t = new Thread();
+t.start();
+Wait a minute! What is it there to run?
+
+Thread Life Cycle
+
+Thread Priority
+You can set a priority of a thread to a number between 1 and 10
+MAX_PRIORITY = 10
+NORM_PIORITY = 5
+MIN_PRIORITY = 1
+
+Creating Threads
+Two main ways:
+●
+
+Extending Thread
+
+●
+
+Implementing Runnable
+
+Runnable
+You need to implement a Runnable interface
+1.
+2.
+3.
+
+You need to implement a run() method in runnable interface
+Then you have to create and instance of Runnable object
+Invoke the start() method in your object which will call run()
+
+class RunnableDemo implements Runnable {
+private Thread t;
+private String threadName;
+RunnableDemo( String name){
+threadName = name;
+System.out.println("Creating " + threadName );
+}
+// Need run method and start method
+}
+
+Run Method
+public void run() {
+System.out.println("Running " + threadName );
+try {
+for(int i = 4; i > 0; i--) {
+System.out.println("Thread: " + threadName + ", " + i);
+// Let the thread sleep for a while.
+Thread.sleep(50);
+}
+} catch (InterruptedException e) {
+System.out.println("Thread " + threadName + " interrupted.");
+}
+System.out.println("Thread " + threadName + " exiting.");
+}
+
+Start Method
+public void start ()
+{
+System.out.println("Starting " + threadName );
+if (t == null)
+{
+t = new Thread (this, threadName);
+t.start ();
+}
+}
+
+TestThread
+public class TestThread {
+public static void main(String args[]) {
+RunnableDemo R1 = new RunnableDemo( "Thread-1");
+R1.start();
+RunnableDemo R2 = new RunnableDemo( "Thread-2");
+R2.start();
+}
+}
+
+Thread Class
+Just extend the thread class
+1.
+2.
+
+Override Run method
+Call start method to start the thread
+
+ThreadDemo
+class ThreadDemo extends Thread {
+private Thread t;
+private String threadName;
+ThreadDemo( String name){
+threadName = name;
+System.out.println("Creating " + threadName );
+}
+// still more run and start
+}
+
+ThreadDemo: Run
+public void run() {
+System.out.println("Running " + threadName );
+try {
+for(int i = 4; i > 0; i--) {
+System.out.println("Thread: " + threadName + ", " + i);
+// Let the thread sleep for a while.
+Thread.sleep(50);
+}
+} catch (InterruptedException e) {
+System.out.println("Thread " + threadName + " interrupted.");
+}
+System.out.println("Thread " + threadName + " exiting.");
+}
+
+ThreadDemo: start
+public void start ()
+{
+System.out.println("Starting " + threadName );
+if (t == null)
+{
+t = new Thread (this, threadName);
+t.start ();
+}
+}
+
+TestThread
+public class TestThread {
+public static void main(String args[]) {
+ThreadDemo T1 = new ThreadDemo( "Thread-1");
+T1.start();
+ThreadDemo T2 = new ThreadDemo( "Thread-2");
+T2.start();
+}
+}
+
+Sleeping Thread
+Use Thread.sleep to suspend a thread for a certain milliseconds.
+There is a version that count in nanosecond also
+public class SleepMessages {
+public static void main(String args[])
+throws InterruptedException {
+for (int i = 0; i < 5; i++) {
+Thread.sleep(1000); //Pause for 1 seconds
+System.out.println(i+1);//Print a message
+}
+}
+}
+
+Interupt
+You can handle interupt by
+1.
+Exceptoin
+2.
+Check interupt status
+try {
+Thread.sleep(4000);
+} catch (InterruptedException e) {
+// We've been interrupted: no more messages.
+return;
+}
+if (Thread.interrupted()) {
+// We've been interrupted: no more crunching.
+return;
+}
+
+InterruptDemo
+public class InterruptDemo extends Thread{
+public void run()
+{
+for(int i=0; i<10; i++){
+System.out.println(i+1);
+try {
+Thread.sleep(1000);
+} catch (InterruptedException e) {
+// TODO Auto-generated catch block
+e.printStackTrace();
+}
+}
+}
+
+Invoking Interrupt
+// fix the error
+public static void main(String[] args) {
+Thread t1 = new InteruptDemo();
+t1.start();
+t1.interrupt();
+Thread.sleep(3000);
+t1.interrupt();
+}
+
+Join
+Invoke join to make the current thread wait for the invoked thread to finish
+Can specify timeout in millisecond
+like sleep, can be interrupt
+JoinDemo
+public class JoinDemo extends Thread{
+public void run()
+{
+System.out.println("do something");
+try {
+T
+hread.sleep(3000);
+} catch (InterruptedException e) {
+System.out.println("ooch!");
+}
+System.out.println("do somemore");
+}
+
+JoinDemo
+public static void main(String[] args) throws InterruptedException {
+Thread t = new JoinDemo();
+t.start();
+// t.join(); // remove my comment to see result
+System.out.println("I have to wait");
+}
+
+Race Conditions and Synchronization
+Show shared counter being incremented by multiple threads (race condition)
+Fix using synchronized keyword
+class Counter {
+private int count = 0;
+public synchronized void increment() {
+count++;
+}
+}
+
+Networking Programming
+We use socket and communicate over TCP
+There are two popular protocols: TCP and UDP
+We need IP and Port
+Communication in client-server model (single server, multiple clients)
+Import java.net
+
+Server
+1.
+
+Create a server socket
+Set a timeout to make sure that your server will not live forever
+
+2.
+3.
+4.
+5.
+
+Accept a connection and create a socket
+Process socket
+Close socket
+Repeat 2
+
+ServerThread.java
+
+// Send response to client
+DataOutputStream out = new DataOutputStream(server.getOutputStream());
+out.writeUTF("Thank you for connecting to " +
+server.getLocalSocketAddress() + "\nGoodbye!");
+// Close connection
+server.close();
+
+import java.io.*;
+import java.net.*;
+
+} catch (Exception e) {
+System.out.println("Error: " + e.toString());
+
+public class ServerThread extends Thread {
+private ServerSocket servsock;
+
+try {
+servsock.close();
+System.out.println("Bye bye");
+} catch (IOException e1) {
+e1.printStackTrace();
+}
+
+public ServerThread(int port) throws IOException {
+servsock = new ServerSocket(port);
+servsock.setSoTimeout(30000); // Close after 30s of no connection
+}
+@Override
+public void run() {
+while (true) {
+try {
+System.out.println("Waiting for connection on " +
+servsock.getLocalPort());
+Socket server = servsock.accept(); // Waits for a client to connect
+
+break; // Exit the while loop
+}
+}
+}
+public static void main(String[] args) {
+int port = 12345; // Example port
+try {
+Thread t = new ServerThread(port);
+t.start(); // Run server in a thread
+} catch (IOException e) {
+e.printStackTrace();
+}
+}
+
+System.out.println("Connected to " +
+server.getRemoteSocketAddress());
+// Read message from client
+DataInputStream in = new DataInputStream(server.getInputStream());
+System.out.println("Received: " + in.readUTF());
+}
+
+ClientThread.java
+// Main method for quick test
+public static void main(String[] args) {
+String serverIp = "localhost";
+int serverPort = 12345;
+
+mport java.io.*;
+import java.net.*;
+j
+
+public class ClientThread extends Thread {
+private final String url;
+private final int port;
+public ClientThread(String ip, int port) {
+this.url = ip;
+this.port = port;
+}
+@Override
+public void run() {
+try {
+System.out.println("Connecting to " + url + " on port " + port);
+Socket client = new Socket(url, port);
+System.out.println("Just connected to " + client.getRemoteSocketAddress());
+// Send message to server
+OutputStream outToServer = client.getOutputStream();
+DataOutputStream out = new DataOutputStream(outToServer);
+out.writeUTF("Hello from " + client.getLocalSocketAddress());
+// Read response from server
+InputStream inFromServer = client.getInputStream();
+DataInputStream in = new DataInputStream(inFromServer);
+System.out.println("Server says: " + in.readUTF());
+// Close connection
+client.close();
+} catch (IOException e) {
+e.printStackTrace();
+}
+}
+
+Thread client = new ClientThread(serverIp, serverPort);
+client.start();
+}
+}
+
+Multi-client version
+Here's a multi-client version of the original ServerThread, which uses a dedicated
+ClientHandler thread for each client connection. This allows the server to handle
+many clients simultaneously — a key feature in real-world chat systems, games,
+etc.
+
+Multi-Client ServerThread.java
+import java.io.*;
+import java.net.*;
+
+} catch (IOException e) {
+System.out.println("Error: " + e.getMessage());
+break;
+}
+
+public class ServerThread extends Thread {
+private ServerSocket servsock;
+
+}
+
+public ServerThread(int port) throws IOException {
+servsock = new ServerSocket(port);
+System.out.println("Server started on port " + port);
+}
+
+try {
+servsock.close();
+} catch (IOException e) {
+e.printStackTrace();
+}
+
+@Override
+public void run() {
+while (true) {
+try {
+System.out.println("Waiting for client...");
+Socket clientSocket = servsock.accept();
+System.out.println("Connected to " +
+clientSocket.getRemoteSocketAddress());
+// Start a new thread for each client
+new ClientHandler(clientSocket).start();
+
+}
+public static void main(String[] args) {
+int port = 12345;
+try {
+new ServerThread(port).start();
+} catch (IOException e) {
+e.printStackTrace();
+}
+}
+}
+
+ClientHandler.java
+import java.io.*;
+import java.net.*;
+
+// Respond to client
+out.writeUTF("Hello! You are connected to " +
+clientSocket.getLocalSocketAddress());
+
+public class ClientHandler extends Thread {
+private Socket clientSocket;
+
+// Close the socket
+clientSocket.close();
+
+public ClientHandler(Socket socket) {
+this.clientSocket = socket;
+}
+
+} catch (IOException e) {
+System.out.println("ClientHandler error: " + e.getMessage());
+}
+}
+
+@Override
+public void run() {
+try {
+// Setup input and output streams
+DataInputStream in = new
+DataInputStream(clientSocket.getInputStream());
+DataOutputStream out = new
+DataOutputStream(clientSocket.getOutputStream());
+// Read client message
+String message = in.readUTF();
+System.out.println("Received from " +
+clientSocket.getRemoteSocketAddress() + ": " + message);
+
+}
+
+Java Chat Server and Client
+🧠 Goal
+Build a text-based chat system where:
+The server handles multiple clients concurrently.
+Each client can send and receive messages in real-time.
+Messages are broadcast to all connected clients.
+🧩 Part 1: Design Overview
+Server:
+Accepts multiple client connections.
+Spawns a new ClientHandler thread per client.
+Maintains a list of client output streams for broadcasting.
+Client:
+Connects to the server.
+Has two threads:
+One for sending messages (keyboard input)
+One for receiving messages (from server)
+
+HINTS
+If they get stuck, you could give hints like:
+“Did you remember to flush the output stream?”
+“What happens when one client disconnects?”
+“Try adding synchronized around the broadcast loop if it crashes.”
+
+Assignment 3
+Create a program that send graphical object to peers
+You should have at least two windows
+You should send object with graphic or image
+You should setup a server to keep track of transiting objects
+Local objects in each windows doesn’t have to be on server
+Hint:
+The object on window #2 hit the left border, it will send object to server. the server will find out what is on the left of #2,
+which can be #1The server will send the object to the right of #1 window.
+If the object hit the right border of #2 window, it will send object to the server, the server will then find out what is on the
+right of #2 which is #1 window, the server will then send the object to #1 window on the left side.
+
+

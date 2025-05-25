@@ -1,0 +1,69 @@
+🎓 Assignment 3: Multi-Screen Fish Tank
+
+:
+
+📌 Objective
+
+Create a Java-based graphical application that simulates a fish tank across multiple windows,
+where graphical objects (e.g., fish) move across screens and are handed off between clients
+via a central server.
+
+🎯 Learning Goals
+●​ Practice multithreading and networking​
+●​ Work with Java graphics (Swing, JavaFX, or other libraries)​
+●​ Handle object serialization or image transmission​
+●​ Apply object movement and collision/boundary detection​
+●​ Build server-client coordination logic​
+
+🧩 Core Requirements
+1.​ At least two separate client windows​
+○​ Each acts as a local fish tank with independently moving fish​
+2.​ Graphical Objects​
+○​ Each client displays at least 1 object (fish, turtle, etc.)​
+○​ Objects must be visual (image or drawn shape)​
+3.​ Server​
+○​ Tracks logical window positions (e.g., #1 left of #2)​
+
+○​ Receives objects from one client and forwards them to the correct adjacent
+window​
+4.​ Cross-Window Movement​
+○​ When an object hits a left/right border, send it to the server​
+○​ Server calculates destination client and sends the object to the correct edge of
+that window​
+○​ Local-only objects (not in transit) don’t need to be tracked by the server​
+
+🧠 Hint: Logical Flow
+●​ Window #2 has a fish that hits its left border → sends to server​
+●​ Server checks: who is left of #2? → answer: #1​
+●​ Server sends the fish to #1’s right side​
+●​ #1 renders the fish coming in from the right​
+
+⚙️ Technical Considerations
+●​ Use TCP sockets for communication​
+●​ Use Serializable or byte streams for sending objects/images​
+●​ Each client maintains a UI loop + a listener thread for server updates​
+●​ Use BufferedImage, Graphics, or JavaFX ImageView for rendering​
+●​ Consider an object class like:​
+
+class Fish implements Serializable {
+String id;
+int x, y;
+
+int dx, dy;
+String imagePath;
+}
+
+📂 Submission Contents
+●​ Source code (server + client)​
+●​ Short README explaining:​
+○​ Window layout logic​
+○​ Object transfer logic​
+○​ Libraries used​
+●​ At least 2 screenshots showing transfer in action​
+
+🧪 Bonus (Optional)
+●​ Add object types (e.g., jellyfish, crab)​
+●​ Add vertical borders and top/bottom neighbors​
+●​ Support 3+ windows dynamically​
+
+

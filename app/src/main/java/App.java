@@ -5,10 +5,14 @@
 
 import chat.ClientThread;
 import chat.ServerThread;
+import fishtank.FishTankClient;
+import fishtank.FishTankServer;
+import javafx.application.Application;
 
 public class App {
     private static final int PORT = 8080;
     private static final int CHAT_PORT = 12345;
+    private static final int FISHTANK_PORT = 12346;
     
     public String getGreeting() {
         return "Hello World!";
@@ -19,14 +23,22 @@ public class App {
             startChatServer();
         } else if (args.length > 0 && args[0].equalsIgnoreCase("chat-client")) {
             startChatClient();
+        } else if (args.length > 0 && args[0].equalsIgnoreCase("fishtank-server")) {
+            startFishTankServer();
+        } else if (args.length > 0 && args[0].equalsIgnoreCase("fishtank-client")) {
+            startFishTankClient(args);
         } else {
             System.out.println("Available commands:");
-            System.out.println("  chat-server   - Start PA10 Chat server (console-based)");
-            System.out.println("  chat-client   - Start PA10 Chat client (console-based)");
+            System.out.println("  chat-server      - Start PA10 Chat server (console-based)");
+            System.out.println("  chat-client      - Start PA10 Chat client (console-based)");
+            System.out.println("  fishtank-server  - Start Fish Tank server");
+            System.out.println("  fishtank-client  - Start Fish Tank client (JavaFX GUI)");
             System.out.println();
             System.out.println("Examples:");
             System.out.println("  java -jar ChatApp.jar chat-server");
             System.out.println("  java -jar ChatApp.jar chat-client");
+            System.out.println("  java -jar ChatApp.jar fishtank-server");
+            System.out.println("  java -jar ChatApp.jar fishtank-client");
         }
     }
     
@@ -50,6 +62,29 @@ public class App {
             client.join(); // Wait for client to complete
         } catch (Exception e) {
             System.err.println("Failed to start chat client: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    private static void startFishTankServer() {
+        System.out.println("Starting Fish Tank Server...");
+        try {
+            FishTankServer server = new FishTankServer(FISHTANK_PORT);
+            server.start();
+            server.join(); // Wait for server to complete
+        } catch (Exception e) {
+            System.err.println("Failed to start fish tank server: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    private static void startFishTankClient(String[] args) {
+        System.out.println("Starting Fish Tank Client (JavaFX GUI)...");
+        try {
+            // Launch JavaFX application
+            Application.launch(FishTankClient.class, args);
+        } catch (Exception e) {
+            System.err.println("Failed to start fish tank client: " + e.getMessage());
             e.printStackTrace();
         }
     }

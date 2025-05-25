@@ -9,7 +9,6 @@ import javafx.application.Application;
 
 public class App {
     private static final int PORT = 8080;
-    private static final int CHAT_PORT = 12345;
     private static final int FISHTANK_PORT = 12346;
     
     public String getGreeting() {

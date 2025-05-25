@@ -123,6 +123,16 @@ public class FishTankClient extends Application {
                                 System.out.println("Received object: " + receivedObject);
                             });
                         }
+                    } else if ("BOUNCE_OBJECT".equals(command)) {
+                        // Receive bounced object (failed transfer)
+                        Object obj = in.readObject();
+                        if (obj instanceof LivingThing) {
+                            LivingThing bouncedObject = (LivingThing) obj;
+                            Platform.runLater(() -> {
+                                livingThings.add(bouncedObject);
+                                System.out.println("Bounced object: " + bouncedObject);
+                            });
+                        }
                     }
                 }
             }
@@ -150,7 +160,7 @@ public class FishTankClient extends Application {
                            random.nextDouble() * (WINDOW_WIDTH - 50),
                            random.nextDouble() * (WINDOW_HEIGHT - 35),
                            (random.nextBoolean() ? 1 : -1) * (0.5 + random.nextDouble() * 1.5),
-                           (random.nextBoolean() ? 1 : -1) * (0.3 + random.nextDouble() * 0.7));
+                           0); // Crabs have no vertical movement
         livingThings.add(crab);
         
         // Add a jellyfish
@@ -181,11 +191,11 @@ public class FishTankClient extends Application {
             
             // Check boundaries and handle transfers
             if (thing.isAtLeftEdge() && thing.getDx() < 0) {
-                // Transfer to left window
+                // Transfer to left window (server will handle bouncing if no window exists)
                 toTransfer.add(thing);
                 transferObject(thing, "left");
             } else if (thing.isAtRightEdge(WINDOW_WIDTH) && thing.getDx() > 0) {
-                // Transfer to right window
+                // Transfer to right window (server will handle bouncing if no window exists)
                 toTransfer.add(thing);
                 transferObject(thing, "right");
             } else {

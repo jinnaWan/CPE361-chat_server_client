@@ -87,6 +87,19 @@ public class ClientWindowHandler extends Thread {
         }
     }
     
+    // Send object back to client when transfer fails (for bouncing)
+    public void bounceObject(LivingThing object) {
+        try {
+            if (connected && out != null) {
+                out.writeObject("BOUNCE_OBJECT");
+                out.writeObject(object);
+                out.flush();
+            }
+        } catch (IOException e) {
+            System.out.println("Error sending bounce object to window " + windowId + ": " + e.getMessage());
+        }
+    }
+    
     public boolean isConnected() {
         return connected;
     }

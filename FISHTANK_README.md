@@ -9,8 +9,8 @@ This is a Java-based graphical application that simulates a fish tank across mul
 - **Multiple Client Windows**: Each client acts as a local fish tank with independently moving creatures
 - **Cross-Window Movement**: When creatures hit left/right borders, they are transferred to adjacent windows
 - **Three Types of Living Things**:
-  - **Fish**: Simple linear movement
-  - **Crab**: Sideways movement with slower vertical motion
+  - **Fish**: Simple linear movement in all directions
+  - **Crab**: Horizontal-only movement (no vertical movement)
   - **Jellyfish**: Floating movement with wavy patterns
 - **JavaFX Graphics**: Beautiful visual representation with actual creature images
 - **Network Communication**: TCP sockets with object serialization for creature transfer
@@ -27,8 +27,9 @@ This is a Java-based graphical application that simulates a fish tank across mul
 1. When a creature hits the left edge (moving left), it's sent to the window on the left
 2. When a creature hits the right edge (moving right), it's sent to the window on the right
 3. The server calculates the target window and forwards the creature
-4. The creature appears at the opposite edge of the target window
-5. Creatures bounce off top/bottom walls within each window
+4. If the target window exists, the creature appears at the opposite edge of that window
+5. If the target window doesn't exist, the creature bounces back with reversed direction
+6. Creatures bounce off top/bottom walls within each window
 
 ### Technical Implementation
 - **Server**: `FishTankServer` manages window coordination and object transfers

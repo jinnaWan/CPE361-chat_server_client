@@ -1,8 +1,9 @@
 package fishtank;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class FishTankServer extends Thread {
@@ -62,7 +63,7 @@ public class FishTankServer extends Thread {
             newX = 750; // Place at right edge of target window (assuming 800px width)
         }
         
-        // Check if target window exists
+        // Check if target window exists and is valid
         if (targetWindowId >= 0 && targetWindowId < clientWindows.size()) {
             ClientWindowHandler targetWindow = clientWindows.get(targetWindowId);
             if (targetWindow != null && targetWindow.isConnected()) {
@@ -70,10 +71,27 @@ public class FishTankServer extends Thread {
                 targetWindow.receiveObject(object);
                 System.out.println("Object transferred to window " + targetWindowId);
             } else {
-                System.out.println("Target window " + targetWindowId + " not available");
+                System.out.println("Target window " + targetWindowId + " not available, bouncing back");
+                // Send object back to origin window to bounce
+                bounceObjectBack(object, fromWindowId);
             }
         } else {
-            System.out.println("No window " + direction + " of window " + fromWindowId);
+            System.out.println("No window " + direction + " of window " + fromWindowId + " (target would be " + targetWindowId + "), bouncing back");
+            // Send object back to origin window to bounce
+            bounceObjectBack(object, fromWindowId);
+        }
+    }
+    
+    // Send object back to origin window for bouncing
+    private synchronized void bounceObjectBack(LivingThing object, int fromWindowId) {
+        if (fromWindowId >= 0 && fromWindowId < clientWindows.size()) {
+            ClientWindowHandler originWindow = clientWindows.get(fromWindowId);
+            if (originWindow != null && originWindow.isConnected()) {
+                // Reverse the object's horizontal direction for bouncing
+                object.bounceHorizontal();
+                originWindow.bounceObject(object);
+                System.out.println("Object bounced back to window " + fromWindowId);
+            }
         }
     }
     

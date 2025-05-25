@@ -4,13 +4,13 @@ public class Crab extends LivingThing {
     private static final long serialVersionUID = 1L;
     
     public Crab(String id, double x, double y, double dx, double dy) {
-        super(id, x, y, dx, dy, "/images/crab.png", 50, 35);
+        super(id, x, y, dx, 0, "/images/crab.png", 50, 35); // Set dy to 0 for horizontal-only movement
     }
     
     @Override
     public void move() {
-        // Crabs move sideways more than vertically
+        // Crabs move only horizontally
         x += dx;
-        y += dy * 0.3; // Slower vertical movement
+        // No vertical movement for crabs
     }
 } 

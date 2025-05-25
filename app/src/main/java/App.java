@@ -3,8 +3,6 @@
  */
 
 
-import chat.ClientThread;
-import chat.ServerThread;
 import fishtank.FishTankClient;
 import fishtank.FishTankServer;
 import javafx.application.Application;
@@ -19,50 +17,18 @@ public class App {
     }
 
     public static void main(String[] args) {
-        if (args.length > 0 && args[0].equalsIgnoreCase("chat-server")) {
-            startChatServer();
-        } else if (args.length > 0 && args[0].equalsIgnoreCase("chat-client")) {
-            startChatClient();
-        } else if (args.length > 0 && args[0].equalsIgnoreCase("fishtank-server")) {
+        if (args.length > 0 && args[0].equalsIgnoreCase("fishtank-server")) {
             startFishTankServer();
         } else if (args.length > 0 && args[0].equalsIgnoreCase("fishtank-client")) {
             startFishTankClient(args);
         } else {
             System.out.println("Available commands:");
-            System.out.println("  chat-server      - Start PA10 Chat server (console-based)");
-            System.out.println("  chat-client      - Start PA10 Chat client (console-based)");
             System.out.println("  fishtank-server  - Start Fish Tank server");
             System.out.println("  fishtank-client  - Start Fish Tank client (JavaFX GUI)");
             System.out.println();
             System.out.println("Examples:");
-            System.out.println("  java -jar ChatApp.jar chat-server");
-            System.out.println("  java -jar ChatApp.jar chat-client");
-            System.out.println("  java -jar ChatApp.jar fishtank-server");
-            System.out.println("  java -jar ChatApp.jar fishtank-client");
-        }
-    }
-    
-    private static void startChatServer() {
-        System.out.println("Starting PA10 Chat Server (lecture-style)...");
-        try {
-            ServerThread server = new ServerThread(CHAT_PORT);
-            server.start();
-            server.join(); // Wait for server to complete
-        } catch (Exception e) {
-            System.err.println("Failed to start chat server: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-    
-    private static void startChatClient() {
-        System.out.println("Starting PA10 Chat Client (console-based)...");
-        try {
-            ClientThread client = new ClientThread("localhost", CHAT_PORT);
-            client.start();
-            client.join(); // Wait for client to complete
-        } catch (Exception e) {
-            System.err.println("Failed to start chat client: " + e.getMessage());
-            e.printStackTrace();
+            System.out.println("  java -jar FishTank.jar fishtank-server");
+            System.out.println("  java -jar FishTank.jar fishtank-client");
         }
     }
     

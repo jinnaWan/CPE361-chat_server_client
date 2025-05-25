@@ -1,4 +1,4 @@
-package fishtank;
+package fishtank.livingthings;
 
 public class Crab extends LivingThing {
     private static final long serialVersionUID = 1L;

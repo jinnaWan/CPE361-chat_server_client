@@ -81,7 +81,7 @@ jar {
 
 // Configure the shadowJar task for JavaFX
 shadowJar {
-    archiveBaseName.set('ChatApp')
+    archiveBaseName.set('FishTank')
     archiveClassifier.set('')
     archiveVersion.set('')
     

@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import fishtank.livingthings.LivingThing;
+
 public class ClientWindowHandler extends Thread {
     private Socket clientSocket;
     private ObjectInputStream in;

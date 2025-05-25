@@ -1,4 +1,4 @@
-package fishtank;
+package fishtank.livingthings;
 
 public class Jellyfish extends LivingThing {
     private static final long serialVersionUID = 1L;

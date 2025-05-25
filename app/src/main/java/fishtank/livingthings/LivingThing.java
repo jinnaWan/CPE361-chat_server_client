@@ -1,4 +1,4 @@
-package fishtank;
+package fishtank.livingthings;
 
 import java.io.Serializable;
 

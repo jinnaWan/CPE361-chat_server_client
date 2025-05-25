@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import fishtank.livingthings.Crab;
+import fishtank.livingthings.Fish;
+import fishtank.livingthings.Jellyfish;
+import fishtank.livingthings.LivingThing;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;

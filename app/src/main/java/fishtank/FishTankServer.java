@@ -6,6 +6,8 @@ import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import fishtank.livingthings.LivingThing;
+
 public class FishTankServer extends Thread {
     private ServerSocket serverSocket;
     private boolean running = true;

@@ -19,6 +19,9 @@ Window 0 ←→ Window 1 ←→ Window 2 ←→ Window 3 ...
 - Client detects when objects hit left/right window edges
 - Objects moving left at x ≤ 0 trigger transfer to left neighbor
 - Objects moving right at x ≥ windowWidth trigger transfer to right neighbor
+- **Boundary Bouncing**: Objects at leftmost/rightmost system boundaries bounce back with `dx = -dx`
+  - Left edge of Window 0 (leftmost): bounce back instead of transfer
+  - Right edge of rightmost window: bounce back instead of transfer
 
 **Step 2: Serialization & Network Transfer**
 - Client serializes the `LivingThing` object using Java Object Serialization
@@ -35,15 +38,10 @@ Window 0 ←→ Window 1 ←→ Window 2 ←→ Window 3 ...
 - Object deserialized and added to target window's local collection
 - Continues movement from new position
 
-**Boundary Bouncing Behavior**
-- Objects hitting the left edge of Window 0 (leftmost) bounce back with `dx = -dx`
-- Objects hitting the right edge of the rightmost window bounce back with `dx = -dx`
-- This prevents objects from disappearing at the "end of the world"
-
 ## Libraries Used
 
 - **JavaFX**: Graphics rendering, animation (AnimationTimer), UI controls (Canvas, Stage, Scene)
 - **Java Sockets**: TCP network communication between server and clients
 - **Object Serialization**: Binary transmission of `LivingThing` objects over network streams
 - **Multithreading**: Concurrent client handling (server) and separate network listener threads (client)
-- **Gradle**: Build automation and dependency management 
+- **Gradle**: Build automation and dependency management

@@ -58,9 +58,6 @@ public class FishTankClient extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         
-        // Load images
-        loadImages();
-        
         // Connect to server
         connectToServer();
         
@@ -75,16 +72,6 @@ public class FishTankClient extends Application {
             disconnect();
             Platform.exit();
         });
-    }
-    
-    private void loadImages() {
-        try {
-            imageCache.put("/images/fish.png", new Image(getClass().getResourceAsStream("/images/fish.png")));
-            imageCache.put("/images/crab.png", new Image(getClass().getResourceAsStream("/images/crab.png")));
-            imageCache.put("/images/jellyfish.png", new Image(getClass().getResourceAsStream("/images/jellyfish.png")));
-        } catch (Exception e) {
-            System.out.println("Error loading images: " + e.getMessage());
-        }
     }
     
     private void connectToServer() {
@@ -233,6 +220,21 @@ public class FishTankClient extends Application {
         }
     }
     
+    private Image getImage(String imagePath) {
+        // Check if image is already cached
+        if (!imageCache.containsKey(imagePath)) {
+            try {
+                // Load and cache the image
+                Image image = new Image(getClass().getResourceAsStream(imagePath));
+                imageCache.put(imagePath, image);
+            } catch (Exception e) {
+                System.out.println("Error loading image: " + imagePath + " - " + e.getMessage());
+                imageCache.put(imagePath, null); // Cache null to avoid repeated attempts
+            }
+        }
+        return imageCache.get(imagePath);
+    }
+    
     private void render() {
         // Clear canvas with blue background (water)
         gc.setFill(Color.LIGHTBLUE);
@@ -240,11 +242,11 @@ public class FishTankClient extends Application {
         
         // Draw living things
         for (LivingThing thing : livingThings) {
-            Image image = imageCache.get(thing.getImagePath());
+            Image image = getImage(thing.getImagePath());
             if (image != null) {
                 gc.drawImage(image, thing.getX(), thing.getY(), thing.getWidth(), thing.getHeight());
             } else {
-                // Fallback: draw colored rectangle
+                // Fallback: draw colored rectangle if image fails to load
                 gc.setFill(Color.ORANGE);
                 gc.fillRect(thing.getX(), thing.getY(), thing.getWidth(), thing.getHeight());
             }
